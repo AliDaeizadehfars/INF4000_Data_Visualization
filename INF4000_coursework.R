@@ -94,15 +94,25 @@ H_TR_V <- merge(H_TR, Artist_popularity, by.x = "artists", by.y = "artists")
 
 hexbin_ <- hexbin(y = H_TR_V$popularity, x = H_TR_V$Average_Popularity, xbins = 25)
 
+
 ggplot(data = H_TR_V, aes(x = Average_Popularity, y = popularity)) +
   geom_hex(bins = 25) +
-  scale_fill_viridis_c(option = "A", direction = -1) +
-  labs(title = "Hexbin Plot for Track Popularity vs Artist Popularity",
-       x = "Artist Popularity",
-       y = "Track Popularity") +
-  theme_minimal()
-
-
+  scale_fill_viridis_c(option = "A", direction = -1) + 
+  labs(
+    title = "Hexbin Plot for Track Popularity vs Artist Popularity",
+    x = "Artist Popularity",
+    y = "Track Popularity",
+    fill = "Count"  # Add a legend title
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),  
+    axis.title = element_text(size = 14, face = "bold"),             
+    axis.text = element_text(size = 12),                             
+    legend.title = element_text(size = 14),                          
+    legend.text = element_text(size = 12),                          
+    plot.margin = margin(20, 20, 20, 20)                            
+  )
 
 #----------------------------------Spider Plot for 10genre/rest-----------------
 
@@ -162,36 +172,23 @@ spider_V <- rbind(
   Spider_data[,-1]  
 )
 
+
+colors <- viridis(2,option = "C" ,alpha = 0.9)
+
 radarchart(spider_V,
-           axistype = 1,                           
-           pcol = c("blue", "red"),                
-           pfcol = c(rgb(0, 0, 1, 0.3), rgb(1, 0, 0, 0.3)),  
-           plwd = 4,                               
+           axistype = 1,                          
+           pcol = colors,                          
+           pfcol = adjustcolor(colors, alpha.f = 0.5),  
+           plwd = 4,                            
            cglcol = "grey",                        
-           cglty = 1,                              
+           cglty = 1,                             
            axislabcol = "black",                   
-           caxislabels = seq(0, 1, 0.2),           
-           vlcex = 0.8,                            
-           title = "Comparison of top10 and Rest Genres"
+           caxislabels = seq(0, 1, 0.2),          
+           vlcex = 1.0,                            
+           title = "Comparison of Top 4 and Rest of Genres"  
 )
-view(spider_V)
-
-colors <- viridis(2, alpha = 0.7)
-radarchart(spider_V,
-           axistype = 1,                           
-           pcol = colors,                         
-           pfcol = adjustcolor(colors, alpha.f = 0.3),  
-           plwd = 4,                               
-           cglcol = "grey",                        
-           cglty = 1,                              
-           axislabcol = "black",                   
-           caxislabels = seq(0, 1, 0.2),           
-           vlcex = 0.8,                            
-           title = "Comparison of Top 10 and Rest Genres"
-)
-
-
-
+mtext("Note: The data has been normalized to values between 0 and 1.", 
+      side = 1, line = 2, cex = 0.8, col = "black")
 #----------------------------------Stacked bar chart for top 10 artists-------
 SB_data <- data_clean[,- c(1,3,20,4)]
 
@@ -244,7 +241,7 @@ ggplot(SB_data_V_long, aes(x = artists, y = value, fill = characteristic)) +
   ) +
   scale_fill_viridis_d() +  #
   theme(
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 12),  s
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 12),  
     axis.text.y = element_text(size = 12),                       
     axis.title.x = element_text(size = 14),                       
     axis.title.y = element_text(size = 14),                       
@@ -279,15 +276,20 @@ artist_popularity <- P_Data %>%
 artist_Freq_popularity <- merge(artist_freq_df, artist_popularity, by.x = "Artist", by.y = "artists")
 
 
-ggplot(artist_summary, aes(x = Average_Popularity, y = Frequency)) +
-  geom_line(color = "yellow", size = 1) +
-  geom_point(color = "darkblue", size = 3) +
+ggplot(artist_Freq_popularity, aes(x = Average_Popularity, y = Frequency)) +
+  geom_line(color = viridis(1, begin = 0.7, end = 0.7), size = 1) +  
+  geom_point(color = viridis(1, begin = 0.3, end = 0.3), size = 3) +  
   theme_minimal() +
   labs(
     title = "Line Graph: Artist Popularity vs. Song Frequency",
     x = "Average Popularity",
     y = "Song Frequency"
   ) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
+    axis.text.y = element_text(size = 12), 
+    axis.title.x = element_text(size = 14, face = "bold"),  
+    axis.title.y = element_text(size = 14, face = "bold"), 
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5) 
+  )
 
